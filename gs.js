@@ -132,6 +132,22 @@
                 var node = document.createElement(str);
                 e.appendChild(node);
             });
+        },
+        /*
+           参数为字符串: 返回指定样式的值
+           参数为对象  :为指定的元素添加样式
+         */
+        css: function (arg) {
+            if (typeof arg == 'string') {
+                return this.e[0].style[arg];
+            } else if (typeof arg == 'object') {
+                this.each(function (e) {
+                    for (var name in arg) {
+                        e.style[name] = arg[name];
+                    }
+                });
+                return this;
+            }
         }
     }
 
