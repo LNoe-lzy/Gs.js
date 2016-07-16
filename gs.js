@@ -4,8 +4,7 @@
 ;(function (window) {
     /*
        声明全局变量指定接口 'G'
-
-       target: 用户指定的元素
+       sel: 用户指定的元素
      */
     window.G = Gs = function (sel) {
         return new gs(sel)
@@ -82,9 +81,58 @@
                     e.value = val;
                 });
             }
+        },
+        /*
+           参数为字符串: 获取元素属性
+           参数为对象  : 为元素设置属性值
+         */
+        attr: function (arg) {
+           if (typeof arg == 'string') {
+               return this.e[0].getAttribute(arg);
+           } else if (typeof arg == 'object') {
+               this.each(function (e) {
+                   for (var name in arg) {
+                       e.setAttribute(name, arg[name]);
+                   }
+               })
+           } else {
+               console.error('参数不合法: attr()方法参数为对象或者字符串');
+           }
+        },
+        //查找指定元素下的子元素
+        find: function (arg) {
+            var nodeList = this.e[0].querySelectorAll(arg);
+            //清除当前对象已保存的元素
+            this.e = [];
+            for(var i in nodeList) {
+                if (nodeList[i].tagName !== undefined) {
+                    //需要删除for in 循环遍历的属性方法
+                    this.e.push(nodeList[i]);
+                }
+            }
+            return this;
+        },
+        //删除指定元素及其所有子元素
+        remove: function (str) {
+            this.each(function (e) {
+                var nodeList = this.e[0].querySelectorAll(str);
+                for (var i in nodeList) {
+                    if (nodeList[i].tagName !== undefined) {
+                        e.removeChild(nodeList[i]);
+                    }
+                }
+            });
+        },
+        //为指定元素添加子元素
+        append: function (str) {
+            if (typeof str != 'string') {
+                console.error('参数不合法: addChild()方法的参数为字符串');
+            }
+            this.each(function (e) {
+                var node = document.createElement(str);
+                e.appendChild(node);
+            });
         }
-
-
     }
 
 })(window);
