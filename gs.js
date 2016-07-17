@@ -148,6 +148,104 @@
                 });
                 return this;
             }
+        },
+        /*
+           第三个参数用户判断给指定元素添加/删除事件
+           a: 添加指定事件
+           r: 删除指定事件
+         */
+        event: function(en, type, fn) {
+            switch (type) {
+                case 'a':
+                    document.addEventListener ? this.each(function(eles) {
+                        eles.addEventListener(en, fn, false);
+                    }) : this.each(function(eles) {
+                        eles.attachEvent("on" + en, fn);
+                    });
+                    break;
+                case 'r':
+                    document.removeEventListener ? this.each(function(eles) {
+                        eles.removeEventListener(en, fn, false);
+                    }) : this.each(function(eles) {
+                        eles.detachEvent("on" + en, fn);
+                    });
+                    break;
+            }
+            return this;
+        },
+        click: function (fn) {
+            this.event('click', 'a', fn);
+            return this;
+        },
+        mouseover: function (fn) {
+            this.event('mouseover', 'a', fn);
+            return this;
+        },
+        mouseout: function (fn) {
+            this.event('mouseout', 'a', fn);
+            return this;
+        },
+        mousemove: function (fn) {
+            this.event('mousemove', 'a', fn);
+            return this;
+        },
+        mousedown: function(fn) {
+            this.event("mousedown", 'a', fn);
+            return this;
+        },
+
+        mouseup: function(fn) {
+            this.event("mouseup", 'a', fn);
+            return this;
+        },
+        /*
+           添加动画处理函数
+         */
+        animate: function (obj, spd, fn) {
+            if (!spd) {
+                spd = 20;
+            }
+            this.each(function (e) {
+                var flag = true;
+                clearInterval(e.timer);
+                e.timer = setInterval(function(){
+                    for(var attr in obj){
+                        var icur = 0;
+                        if(attr == 'opacity'){
+                            icur = Math.round(parseFloat(Gs.getStyle(e,attr))*100);
+                        }else{
+                            icur = parseInt(Gs.getStyle(e,attr));
+                        }
+                        var speed = 0;
+                        speed = (obj[attr] - icur)/10;
+                        speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                        if(icur != obj[attr]){
+                            flag = false;
+                        }
+                        if(attr == 'opacity'){
+                            e.style[attr] = (icur + speed)/100;
+                        }else{
+                            e.style[attr] = icur + speed + "px";
+                        }
+                    }
+                    if(flag){
+                        clearInterval(e.timer);
+                        if(fn){
+                            fn();
+                        }
+                    }
+                },spd);
+            });
+        },
+
+    };
+
+    //获取元素的属性
+    Gs.getStyle = function (obj,attr) {
+        if(obj.currentStyle){
+            return obj.currentStyle[attr];
+        }else{
+            return getComputedStyle(obj,false)[attr];
         }
     }
 
