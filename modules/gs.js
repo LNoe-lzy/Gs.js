@@ -12,10 +12,7 @@ Gsframe.define('gs', [], function () {
     // window.Gxhr = Gsxhr = function () {
     //    return new gsxhr();
     // };
-    /*
-       定义版本号
-     */
-    Gs.version = '1.0';
+
     //构建gs对象
     var gs = function (sel) {
         //this.e 为当前的获取到的html元素
@@ -27,7 +24,7 @@ Gsframe.define('gs', [], function () {
             return;
         }
         //处理this情况
-        if (typeof sel == 'object') {
+        if (typeof sel === 'object') {
             this.e.push(sel);
             return;
         }
@@ -37,8 +34,8 @@ Gsframe.define('gs', [], function () {
             return;
         }
         for(var i in nodeList) {
+            //需要删除for in 循环遍历的属性方法
             if (nodeList[i].tagName !== undefined) {
-                //需要删除for in 循环遍历的属性方法
                 this.e.push(nodeList[i]);
             }
         }
@@ -49,7 +46,7 @@ Gsframe.define('gs', [], function () {
     gs.prototype = {
         //每一个gs对象添加方法
         each: function (fn) {
-            for (i in this.e) {
+            for (var i in this.e) {
                 fn.call(this, this.e[i]);
             }
             return this;
@@ -60,8 +57,19 @@ Gsframe.define('gs', [], function () {
          */
         html: function (text) {
             if (arguments.length === 0) {
-                //去除多余的空格
-                return Gs.trim(this.e[0].innerHTML);
+                var args = [];
+                this.each(function (e) {
+                    args.push(Gs.trim(e.innerHTML));
+                });
+                /*
+                   选择单个对象: 返回值
+                   选择多个对象: 返回数组
+                 */
+                if (args.length === 1) {
+                    return args[0];
+                } else {
+                    return args;
+                }
             } else if (arguments.length === 1) {
                 this.each(function (e) {
                     e.innerHTML = text;
@@ -78,11 +86,20 @@ Gsframe.define('gs', [], function () {
                 console.error('选择对象无效: value()方法的有效对象为INPUT、TEXTAREA');
             }
             if (arguments.length === 0) {
-                return this.e[0].value;
+                var args = [];
+                this.each(function (e) {
+                    args.push(e.value);
+                });
+                if (args.length === 1) {
+                    return args[0];
+                } else {
+                    return args;
+                }
             } else if (arguments.length === 1) {
                 this.each(function (e) {
                     e.value = val;
                 });
+                return this;
             }
         },
         /*
@@ -90,8 +107,16 @@ Gsframe.define('gs', [], function () {
            参数为对象  : 为元素设置属性值
          */
         attr: function (arg) {
-           if (typeof arg == 'string') {
-               return this.e[0].getAttribute(arg);
+           if (typeof arg === 'string') {
+               var args = [];
+               this.each(function (e) {
+                   args.push(e.getAttribute(arg));
+               });
+               if (args.length === 1) {
+                   return args[0];
+               } else {
+                   return args;
+               }
            } else if (typeof arg == 'object') {
                this.each(function (e) {
                    for (var name in arg) {
