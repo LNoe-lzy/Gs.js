@@ -1,20 +1,17 @@
-/**
- * Created by lizongyuan on 16/7/14.
- */
-;(function (window) {
-    /*
+Gsframe.define('gs', [], function () {
+	/*
        声明全局变量指定接口 'G'
        sel: 用户指定的元素
      */
-    window.G = Gs = function (sel) {
+    var Gs = function (sel) {
         return new gs(sel)
     };
     /*
        全局ajax接口
      */
-    window.Gxhr = Gsxhr = function () {
-       return new gsxhr();
-    };
+    // window.Gxhr = Gsxhr = function () {
+    //    return new gsxhr();
+    // };
     /*
        定义版本号
      */
@@ -285,17 +282,17 @@
             });
             return this;
         },
-
     };
 
     //构建ajax对象
-    var gsxhr = function () {
-       if (window.XMLHttpRequest) {
-           return new XMLHttpRequest();
-       } else {
-           return new ActiveXObject("Microsoft.XMLHTTP");
-       }
-    };
+    // var gsxhr = function () {
+    //    if (window.XMLHttpRequest) {
+    //        return new XMLHttpRequest();
+    //    } else {
+    //        return new ActiveXObject("Microsoft.XMLHTTP");
+    //    }
+    // };
+
     /*
        全局控制函数
      */
@@ -312,79 +309,82 @@
     Gs.trim = function (str) {
         return str.replace(/(^\s+)|(\s+$)/g, "")
     };
+
     //ajax
-    Gs.ajsx = function (data) {
-        var type = {
-            xml: "application/xml, text/xml",
-            html: "text/html",
-            script: "text/javascript, application/javascript",
-            json: "application/json, text/javascript",
-            text: "text/plain",
-            _default: "*/*"
-        };
-        var xhr = new gsxhr();
+    // Gs.ajsx = function (data) {
+    //     var type = {
+    //         xml: "application/xml, text/xml",
+    //         html: "text/html",
+    //         script: "text/javascript, application/javascript",
+    //         json: "application/json, text/javascript",
+    //         text: "text/plain",
+    //         _default: "*/*"
+    //     };
+    //     var xhr = new gsxhr();
 
-        data.method = data.method.toUpperCase() || "GET";
-        data.datatype = data.datatype || "json";
-        data.asyn = data.asyn || true;
+    //     data.method = data.method.toUpperCase() || "GET";
+    //     data.datatype = data.datatype || "json";
+    //     data.asyn = data.asyn || true;
 
-        if (xhr) {
-            xhr.open(data.method, data.url, data.asyn);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.setRequestHeader("Accept", data.datatype && type[data.datatype] ? type[data.datatype] + ", */*" : type._default);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 1) {
-                    data.loading(xhr.response);
-                } else {
-                    if (xhr.readyState == 2) {
-                        data.loaded(xhr.response);
-                    } else {
-                        if (xhr.readyState == 3) {
-                            data.interactive(xhr.response);
-                        } else {
-                            if (xhr.readyState == 4) {
-                                if (xhr.status == 200) {
-                                    Gs.dataform(xhr, data.datatype);
-                                    data.success(xhr.response);
-                                    return xhr;
-                                } else {
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            try {
-                xhr.send(data.method === "POST" ? Gs.serialize(data.senddata) : null)
-            } catch (j) {
-                data.fail(xhr.response);
-            }
-        }
-    };
+    //     if (xhr) {
+    //         xhr.open(data.method, data.url, data.asyn);
+    //         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    //         xhr.setRequestHeader("Accept", data.datatype && type[data.datatype] ? type[data.datatype] + ", */*" : type._default);
+    //         xhr.onreadystatechange = function() {
+    //             if (xhr.readyState == 1) {
+    //                 data.loading(xhr.response);
+    //             } else {
+    //                 if (xhr.readyState == 2) {
+    //                     data.loaded(xhr.response);
+    //                 } else {
+    //                     if (xhr.readyState == 3) {
+    //                         data.interactive(xhr.response);
+    //                     } else {
+    //                         if (xhr.readyState == 4) {
+    //                             if (xhr.status == 200) {
+    //                                 Gs.dataform(xhr, data.datatype);
+    //                                 data.success(xhr.response);
+    //                                 return xhr;
+    //                             } else {
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         };
+    //         try {
+    //             xhr.send(data.method === "POST" ? Gs.serialize(data.senddata) : null)
+    //         } catch (j) {
+    //             data.fail(xhr.response);
+    //         }
+    //     }
+    // };
 
-    Gs.dataform = function (g, e) {
-        var d = g.getResponseHeader("content-type") || "",
-            c = e === "xml" || !e && d.indexOf("xml") >= 0,
-            f = c ? g.responseXML : g.responseText;
-        if (typeof f === "string") {
-            if (e === "json" || !e && d.indexOf("json") >= 0) {
-                // f = Oct.trim(f);
-                return window.JSON && window.JSON.parse ? window.JSON.parse(f) : (new Function("return " + f))()
-            }
-        }
-        return f
-    };
+    // Gs.dataform = function (g, e) {
+    //     var d = g.getResponseHeader("content-type") || "",
+    //         c = e === "xml" || !e && d.indexOf("xml") >= 0,
+    //         f = c ? g.responseXML : g.responseText;
+    //     if (typeof f === "string") {
+    //         if (e === "json" || !e && d.indexOf("json") >= 0) {
+    //             // f = Oct.trim(f);
+    //             return window.JSON && window.JSON.parse ? window.JSON.parse(f) : (new Function("return " + f))()
+    //         }
+    //     }
+    //     return f
+    // };
 
-    Gs.serialize = function (data) {
-        var key = [], val = [], pair = [], str = "";
-        for (var name in data) {
-            key.push(encodeURIComponent(name));
-            val.push(encodeURIComponent(data[name]));
-        }
-        for (var i = 0; i < key.length; i++) {
-            pair[i] = key[i] + "=" + val[i];
-        }
-        return str = pair.join("&");
-    };
+    // Gs.serialize = function (data) {
+    //     var key = [], val = [], pair = [], str = "";
+    //     for (var name in data) {
+    //         key.push(encodeURIComponent(name));
+    //         val.push(encodeURIComponent(data[name]));
+    //     }
+    //     for (var i = 0; i < key.length; i++) {
+    //         pair[i] = key[i] + "=" + val[i];
+    //     }
+    //     return str = pair.join("&");
+    // };
 
-})(window);
+    return Gs;
+});
+
