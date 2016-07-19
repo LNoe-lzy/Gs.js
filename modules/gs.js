@@ -171,11 +171,9 @@ Gsframe.define('gs', [], function () {
                 var obj = this.e[0];
                 //判断兼容性
                 if (obj.currentStyle) {
-                    //去除'px'
-                    return parseFloat(obj.currentStyle[arg]);
+                    return (obj.currentStyle[arg]);
                 } else {
-                    //去除'px'
-                    return parseFloat(getComputedStyle(obj,false)[arg]);
+                    return (getComputedStyle(obj,false)[arg]);
                 }
             } else if (typeof arg == 'object') {
                 this.each(function (e) {
