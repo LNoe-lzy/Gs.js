@@ -6,24 +6,18 @@ Gsframe.define('gs', [], function () {
     var Gs = function (sel) {
         return new gs(sel)
     };
-    /*
-       全局ajax接口
-     */
-    // window.Gxhr = Gsxhr = function () {
-    //    return new gsxhr();
-    // };
 
-    //构建gs对象
+    // 构建gs对象
     var gs = function (sel) {
-        //this.e 为当前的获取到的html元素
+        // this.e 为当前的获取到的html元素
         this.e = [];
 
-        //如果输入 '', undefined, null;
+        // 如果输入 '', undefined, null;
         if (!sel) {
             console.error('选择对象不能为"", undefined, null!');
             return;
         }
-        //处理this情况
+        // 处理this情况
         if (typeof sel === 'object') {
             this.e.push(sel);
             return;
@@ -44,7 +38,7 @@ Gsframe.define('gs', [], function () {
     };
 
     gs.prototype = {
-        //每一个gs对象添加方法
+        // 每一个gs对象添加方法
         each: function (fn) {
             for (var i in this.e) {
                 fn.call(this, this.e[i]);
@@ -127,7 +121,7 @@ Gsframe.define('gs', [], function () {
                console.error('参数不合法: attr()方法参数为对象或者字符串');
            }
         },
-        //查找指定元素下的子元素
+        // 查找指定元素下的子元素
         find: function (arg) {
             var nodeList = this.e[0].querySelectorAll(arg);
             //清除当前对象已保存的元素
@@ -140,7 +134,7 @@ Gsframe.define('gs', [], function () {
             }
             return this;
         },
-        //删除指定元素及其所有子元素
+        // 删除指定元素及其所有子元素
         remove: function (str) {
             this.each(function (e) {
                 var nodeList = this.e[0].querySelectorAll(str);
@@ -151,7 +145,7 @@ Gsframe.define('gs', [], function () {
                 }
             });
         },
-        //为指定元素添加子元素
+        // 为指定元素添加子元素
         append: function (str) {
             if (typeof str != 'string') {
                 console.error('参数不合法: addChild()方法的参数为字符串');
@@ -203,8 +197,8 @@ Gsframe.define('gs', [], function () {
             }
         },
         /*
-         参数为空: 获取元素的宽度;
-         参数不空: 设置元素的宽度;
+          参数为空: 获取元素的宽度;
+          参数不空: 设置元素的宽度;
          */
         width: function (val) {
             if (!val) {
@@ -307,20 +301,11 @@ Gsframe.define('gs', [], function () {
         },
     };
 
-    //构建ajax对象
-    // var gsxhr = function () {
-    //    if (window.XMLHttpRequest) {
-    //        return new XMLHttpRequest();
-    //    } else {
-    //        return new ActiveXObject("Microsoft.XMLHTTP");
-    //    }
-    // };
-
     /*
        全局控制函数
      */
 
-    //获取元素的属性
+    // 获取元素的属性
     Gs.getStyle = function (obj, attr) {
         if (obj.currentStyle) {
             return obj.currentStyle[attr];
@@ -328,85 +313,26 @@ Gsframe.define('gs', [], function () {
             return getComputedStyle(obj,false)[attr];
         }
     };
-    //去除空格
+    // 去除空格
     Gs.trim = function (str) {
         return str.replace(/(^\s+)|(\s+$)/g, "")
     };
+    // 回调函数列表对象
+    Gs.callback = {
+        callbacks: [],
+        add: function () {
+            for (var fn in arguments) {
+                this.callbacks.push(arguments[fn]);
+            }
+        },
+        fire: function () {
+            this.callbacks.forEach(function (fn) {
+                fn();
+            });
+        }
+    };
 
-    //ajax
-    // Gs.ajsx = function (data) {
-    //     var type = {
-    //         xml: "application/xml, text/xml",
-    //         html: "text/html",
-    //         script: "text/javascript, application/javascript",
-    //         json: "application/json, text/javascript",
-    //         text: "text/plain",
-    //         _default: "*/*"
-    //     };
-    //     var xhr = new gsxhr();
 
-    //     data.method = data.method.toUpperCase() || "GET";
-    //     data.datatype = data.datatype || "json";
-    //     data.asyn = data.asyn || true;
-
-    //     if (xhr) {
-    //         xhr.open(data.method, data.url, data.asyn);
-    //         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    //         xhr.setRequestHeader("Accept", data.datatype && type[data.datatype] ? type[data.datatype] + ", */*" : type._default);
-    //         xhr.onreadystatechange = function() {
-    //             if (xhr.readyState == 1) {
-    //                 data.loading(xhr.response);
-    //             } else {
-    //                 if (xhr.readyState == 2) {
-    //                     data.loaded(xhr.response);
-    //                 } else {
-    //                     if (xhr.readyState == 3) {
-    //                         data.interactive(xhr.response);
-    //                     } else {
-    //                         if (xhr.readyState == 4) {
-    //                             if (xhr.status == 200) {
-    //                                 Gs.dataform(xhr, data.datatype);
-    //                                 data.success(xhr.response);
-    //                                 return xhr;
-    //                             } else {
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         };
-    //         try {
-    //             xhr.send(data.method === "POST" ? Gs.serialize(data.senddata) : null)
-    //         } catch (j) {
-    //             data.fail(xhr.response);
-    //         }
-    //     }
-    // };
-
-    // Gs.dataform = function (g, e) {
-    //     var d = g.getResponseHeader("content-type") || "",
-    //         c = e === "xml" || !e && d.indexOf("xml") >= 0,
-    //         f = c ? g.responseXML : g.responseText;
-    //     if (typeof f === "string") {
-    //         if (e === "json" || !e && d.indexOf("json") >= 0) {
-    //             // f = Oct.trim(f);
-    //             return window.JSON && window.JSON.parse ? window.JSON.parse(f) : (new Function("return " + f))()
-    //         }
-    //     }
-    //     return f
-    // };
-
-    // Gs.serialize = function (data) {
-    //     var key = [], val = [], pair = [], str = "";
-    //     for (var name in data) {
-    //         key.push(encodeURIComponent(name));
-    //         val.push(encodeURIComponent(data[name]));
-    //     }
-    //     for (var i = 0; i < key.length; i++) {
-    //         pair[i] = key[i] + "=" + val[i];
-    //     }
-    //     return str = pair.join("&");
-    // };
 
     return Gs;
 });
