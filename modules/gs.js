@@ -346,6 +346,18 @@ Gsframe.define('gs', [], function () {
             });
         }
     };
+    // 加载函数
+    Gs.ready = function (func) {
+        var oldonload = window.onload;
+        if (typeof window.onload !== 'function') {
+            window.onload = func;
+        } else {
+            window.onload = function () {
+                oldonload();
+                func();
+            }
+        }
+    };
 
     return Gs;
 });
