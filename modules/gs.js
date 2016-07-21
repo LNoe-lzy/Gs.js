@@ -123,16 +123,30 @@ Gsframe.define('gs', [], function () {
         },
         // 查找指定元素下的子元素
         find: function (arg) {
-            var nodeList = this.e[0].querySelectorAll(arg);
+            var curObj = this.e[0];
+            var nodeList = curObj.querySelectorAll(arg);
             //清除当前对象已保存的元素
             this.e = [];
             for(var i in nodeList) {
                 if (nodeList[i].tagName !== undefined) {
                     //需要删除for in 循环遍历的属性方法
+                    nodeList[i].prevObj = curObj;
                     this.e.push(nodeList[i]);
                 }
             }
             return this;
+        },
+        end: function () {
+            var nodeList = this.e;
+            //清除当前对象已保存的元素
+            this.e = [];
+            for (var i in nodeList) {
+                if (nodeList[i].tagName !== undefined) {
+                    this.e.push(nodeList[i].prevObj);
+                }
+            }
+            return this;
+
         },
         // 删除指定元素及其所有子元素
         remove: function (str) {
@@ -331,8 +345,6 @@ Gsframe.define('gs', [], function () {
             });
         }
     };
-
-
 
     return Gs;
 });
