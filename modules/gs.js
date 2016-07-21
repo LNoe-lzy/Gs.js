@@ -229,7 +229,9 @@ Gsframe.define('gs', [], function () {
            a: 添加指定事件
            r: 删除指定事件
          */
-        event: function(en, type, fn) {
+        event: function(en, fn, type) {
+            // 设置默认参数
+            type = 'a' || type;
             switch (type) {
                 case 'a':
                     document.addEventListener ? this.each(function(eles) {
@@ -249,37 +251,36 @@ Gsframe.define('gs', [], function () {
             return this;
         },
         click: function (fn) {
-            this.event('click', 'a', fn);
+            this.event('click', fn);
             return this;
         },
         mouseover: function (fn) {
-            this.event('mouseover', 'a', fn);
+            this.event('mouseover', fn);
             return this;
         },
         mouseout: function (fn) {
-            this.event('mouseout', 'a', fn);
+            this.event('mouseout', fn);
             return this;
         },
         mousemove: function (fn) {
-            this.event('mousemove', 'a', fn);
+            this.event('mousemove', fn);
             return this;
         },
         mousedown: function(fn) {
-            this.event("mousedown", 'a', fn);
+            this.event("mousedown", fn);
             return this;
         },
 
         mouseup: function(fn) {
-            this.event("mouseup", 'a', fn);
+            this.event("mouseup", fn);
             return this;
         },
         /*
            添加动画处理函数
          */
-        animate: function (obj, spd, fn) {
-            if (!spd) {
-                spd = 20;
-            }
+        animate: function (obj, fn, spd) {
+            // 设置速度的默认值
+            spd = spd || 20;
             this.each(function (e) {
                 var flag = true;
                 clearInterval(e.timer);
