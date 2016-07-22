@@ -129,16 +129,17 @@ Gsframe.define('gs', [], function () {
             this.e = [];
             for(var i in nodeList) {
                 if (nodeList[i].tagName !== undefined) {
-                    //需要删除for in 循环遍历的属性方法
+                    // 需要删除for in 循环遍历的属性方法
                     nodeList[i].prevObj = curObj;
                     this.e.push(nodeList[i]);
                 }
             }
             return this;
         },
+        // 返回当前作用域链的上一个对象
         end: function () {
             var nodeList = this.e;
-            //清除当前对象已保存的元素
+            // 清除当前对象已保存的元素
             this.e = [];
             for (var i in nodeList) {
                 if (nodeList[i].tagName !== undefined) {
@@ -161,7 +162,7 @@ Gsframe.define('gs', [], function () {
         },
         // 为指定元素添加子元素
         append: function (str) {
-            if (typeof str != 'string') {
+            if (typeof str !== 'string') {
                 console.error('参数不合法: addChild()方法的参数为字符串');
             }
             this.each(function (e) {
@@ -174,8 +175,7 @@ Gsframe.define('gs', [], function () {
            参数为对象  :为指定的元素添加样式
          */
         css: function (arg) {
-            if (typeof arg == 'string') {
-                // return this.e[0].style[arg];
+            if (typeof arg === 'string') {
                 var obj = this.e[0];
                 //判断兼容性
                 if (obj.currentStyle) {
