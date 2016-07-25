@@ -319,7 +319,20 @@ Gsframe.define('gs', [], function () {
     /*
        全局控制函数
      */
-    //将Array-like对象转化为数组
+
+    // 判断是否为NaN
+    Gs.isNaN = function (obj) {
+        return obj !== obj;
+    };
+    // 判断是否为undefine
+    Gs.isUndefined = function (obj) {
+        return obj === void 0;
+    };
+    // 判断是否为null
+    Gs.isNull = function (obj) {
+        return obj === null;
+    };
+    // 将Array-like对象转化为数组
     Gs.toArray = function (obj) {
        var a = [];
         if (obj !== null) {
