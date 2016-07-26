@@ -1,11 +1,13 @@
-Gsframe.define('gs', [], function () {
-	/*
+;(function (window) {
+    /*
        声明全局变量指定接口 'G'
        sel: 用户指定的元素
      */
-    var Gs = function (sel) {
+    window.G = Gs = function (sel) {
         return new gs(sel)
     };
+    // 版本号
+    Gs.version = '1.0';
 
     // 构建gs对象
     var gs = function (sel) {
@@ -46,8 +48,8 @@ Gsframe.define('gs', [], function () {
             return this;
         },
         /*
-           参数为空: 获取当前元素的标签内的内的值
-           参数不空: 为当前的元素添加/替换内容
+         参数为空: 获取当前元素的标签内的内的值
+         参数不空: 为当前的元素添加/替换内容
          */
         html: function (text) {
             if (arguments.length === 0) {
@@ -56,8 +58,8 @@ Gsframe.define('gs', [], function () {
                     args.push(Gs.trim(e.innerHTML));
                 });
                 /*
-                   选择单个对象: 返回值
-                   选择多个对象: 返回数组
+                 选择单个对象: 返回值
+                 选择多个对象: 返回数组
                  */
                 if (args.length === 1) {
                     return args[0];
@@ -71,8 +73,8 @@ Gsframe.define('gs', [], function () {
             }
         },
         /*
-           参数为空: 获取元素的值
-           参数不空: 为元素设置value值
+         参数为空: 获取元素的值
+         参数不空: 为元素设置value值
          */
         value: function (val) {
             var tName = this.e[0].tagName;
@@ -97,29 +99,29 @@ Gsframe.define('gs', [], function () {
             }
         },
         /*
-           参数为字符串: 获取元素属性
-           参数为对象  : 为元素设置属性值
+         参数为字符串: 获取元素属性
+         参数为对象  : 为元素设置属性值
          */
         attr: function (arg) {
-           if (typeof arg === 'string') {
-               var args = [];
-               this.each(function (e) {
-                   args.push(e.getAttribute(arg));
-               });
-               if (args.length === 1) {
-                   return args[0];
-               } else {
-                   return args;
-               }
-           } else if (typeof arg == 'object') {
-               this.each(function (e) {
-                   for (var name in arg) {
-                       e.setAttribute(name, arg[name]);
-                   }
-               })
-           } else {
-               console.error('参数不合法: attr()方法参数为对象或者字符串');
-           }
+            if (typeof arg === 'string') {
+                var args = [];
+                this.each(function (e) {
+                    args.push(e.getAttribute(arg));
+                });
+                if (args.length === 1) {
+                    return args[0];
+                } else {
+                    return args;
+                }
+            } else if (typeof arg == 'object') {
+                this.each(function (e) {
+                    for (var name in arg) {
+                        e.setAttribute(name, arg[name]);
+                    }
+                })
+            } else {
+                console.error('参数不合法: attr()方法参数为对象或者字符串');
+            }
         },
         // 查找指定元素下的子元素
         find: function (arg) {
@@ -171,8 +173,8 @@ Gsframe.define('gs', [], function () {
             });
         },
         /*
-           参数为字符串: 返回指定样式的值
-           参数为对象  :为指定的元素添加样式
+         参数为字符串: 返回指定样式的值
+         参数为对象  :为指定的元素添加样式
          */
         css: function (arg) {
             if (typeof arg === 'string') {
@@ -197,8 +199,8 @@ Gsframe.define('gs', [], function () {
             }
         },
         /*
-           参数为空: 获取元素的高度;
-           参数不空: 设置元素的高度;
+         参数为空: 获取元素的高度;
+         参数不空: 设置元素的高度;
          */
         height: function (val) {
             if (!val) {
@@ -211,8 +213,8 @@ Gsframe.define('gs', [], function () {
             }
         },
         /*
-          参数为空: 获取元素的宽度;
-          参数不空: 设置元素的宽度;
+         参数为空: 获取元素的宽度;
+         参数不空: 设置元素的宽度;
          */
         width: function (val) {
             if (!val) {
@@ -225,9 +227,9 @@ Gsframe.define('gs', [], function () {
             }
         },
         /*
-           第三个参数用户判断给指定元素添加/删除事件
-           a: 添加指定事件
-           r: 删除指定事件
+         第三个参数用户判断给指定元素添加/删除事件
+         a: 添加指定事件
+         r: 删除指定事件
          */
         event: function(en, fn, type) {
             // 设置默认参数
@@ -276,7 +278,7 @@ Gsframe.define('gs', [], function () {
             return this;
         },
         /*
-           添加动画处理函数
+         添加动画处理函数
          */
         animate: function (obj, fn, spd) {
             // 设置速度的默认值
@@ -317,7 +319,7 @@ Gsframe.define('gs', [], function () {
     };
 
     /*
-       全局控制函数
+     全局控制函数
      */
 
     // 判断是否为NaN
@@ -334,7 +336,7 @@ Gsframe.define('gs', [], function () {
     };
     // 将Array-like对象转化为数组
     Gs.toArray = function (obj) {
-       var a = [];
+        var a = [];
         if (obj !== null) {
             var l = obj.length;
             if (l === null || typeof obj === 'string') {
@@ -386,6 +388,84 @@ Gsframe.define('gs', [], function () {
         }
     };
 
-    return Gs;
-});
+    //定义模块机制
+
+    /*
+     modeuleMap: 存储创建的模块
+     fileMap   : 存储文件的加载状态
+     noop      : 空函数
+     */
+    var moduleMap = {};
+    var fileMap = {};
+    var noop = function () {};
+    // 定义模块
+    Gs.define = function (name, dependencies, fn) {
+        /*
+         name         : 模块名
+         dependencies : 模块的依赖项
+         fn      : 模块的函数主体
+         */
+        if (!moduleMap[name]) {
+            var module = {
+                name: name,
+                dependencies: dependencies,
+                fn: fn
+            };
+            moduleMap[name] = module;
+        }
+        return moduleMap[name];
+    };
+    // 使用模块
+    Gs.use = function (name) {
+        // 存储要使用的模块
+        var module = moduleMap[name];
+
+        if (!module.entity) {
+            var args = [];
+            // 找到要依赖的模块
+            for (var i = 0; i < module.dependencies.length; i++) {
+                if (moduleMap[module.dependencies[i]].entity) {
+                    args.push(moduleMap[module.dependencies[i]].entity);
+                } else {
+                    args.push(this.use(module.dependencies[i]));
+                }
+            }
+            module.entity = module.fn.apply(noop, args);
+        }
+        return module.entity;
+    };
+    // 加载模块
+    Gs.require = function (pathArr, callback) {
+        for (var i = 0; i < pathArr.length; i++) {
+            var path = pathArr[i];
+
+            if (!fileMap[path]) {
+                var head = document.getElementsByTagName('head')[0];
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.async = 'true';
+                script.src = './modules/' + path + '.js';
+                script.onload = function (argument) {
+                    fileMap[path] = true;
+                    head.removeChild(script);
+                    checkAllFiles();
+                };
+                head.appendChild(script);
+            }
+        }
+
+        function checkAllFiles () {
+            var allLoaded = true;
+            for (var i = 0; i < pathArr.length; i++) {
+                if (!fileMap[pathArr[i]]) {
+                    allLoaded = false;
+                    break;
+                }
+            }
+            if (allLoaded) {
+                callback();
+            }
+        }
+    };
+})(window);
 
