@@ -361,6 +361,10 @@
     Gs.trim = function (str) {
         return str.replace(/(^\s+)|(\s+$)/g, "")
     };
+    // 判断一个字符串是否包含另一个字符串
+    Gs.contains = function (str, it) {
+        return str.indexOf(it) !== -1;
+    };
     // 回调函数列表对象
     Gs.callback = {
         callbacks: [],
