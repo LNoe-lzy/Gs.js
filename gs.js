@@ -448,6 +448,7 @@
         },
         // 使用模块
         use: function (name) {
+            var moduleMap = this.moduleMap;
             var noop = this.noop();
             // 存储要使用的模块
             var module = moduleMap[name];
