@@ -46,3 +46,27 @@
 `G('div').mouseup();`
 * animate: 未指定的元素添加动画过渡效果；			
 `G('div').animate({'width': '100'});`
+* Gs.isNaN: 判断指定的对象是否为NaN；	
+`G.isNaN(obj);`
+* Gs.isUndefined: 判断指定对象是否为undefined;	
+`G.isUndefined(obj);`
+* Gs.isNull: 判断指定对象是否为NuLL;		
+`G.isNull(obj);`
+* Gs.toArray(obj): 将指定的类数组对象转换为数组;	
+`G.toArray(obj);`
+* Gs.getStyle: 获取指定元素的指定属性; 		
+`G.getStyle(obj, 'width');`
+* Gs.trim: 去除字符串的多余的空格;		
+`G.trim(str);`
+* Gs.callback.add: 添加指定函数到函数队列;		
+`G.callback.add(fn);`
+* Gs.callback.fire: 执行函数队列的函数;		
+`G.callback.fire();`
+* Gs.ready: 缓存加载函数;		
+`G.ready(fn);`
+* Gs.module.define: 定义模块;		
+`G.module.define('name', [dependencies], fn);`
+* Gs.module.use: 使用模块; 		
+`G.module.use(modulename);`
+* Gs.module.require: 加载模块;		
+`G.module.require('module', fn);`
