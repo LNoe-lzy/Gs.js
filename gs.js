@@ -1,16 +1,13 @@
-;(function (window) {
-    /*
-     声明全局变量指定接口 'G'
-     sel: 用户指定的元素
-     */
-    window.G = Gs = function (sel) {
-        return new gs(sel)
-    };
+/**
+ * Created by lizongyuan on 16/7/27.
+ * ES6版本gs.js
+ */
+{
+    let  Gs = {};
     // 版本号
-    Gs.version = '1.0';
-
-    // 构建gs对象
-    var gs = function (sel) {
+    Gs.version = 'es6 1.0';
+    // 创建gs类
+    let gs = function (sel) {
         // this.e 为当前的获取到的html元素
         this.e = [];
 
@@ -24,36 +21,29 @@
             this.e.push(sel);
             return;
         }
-        var nodeList = document.querySelectorAll(sel);
+        let nodeList = [...document.querySelectorAll(sel)];
         if (nodeList.length === 0) {
             console.error('选择对象无效:' + sel);
             return;
         }
-        for(var i in nodeList) {
-            //需要删除for in 循环遍历的属性方法
-            if (nodeList[i].tagName !== undefined) {
-                this.e.push(nodeList[i]);
-            }
+
+        for (let value of nodeList) {
+            this.e.push(value);
         }
 
         return this;
     };
 
     gs.prototype = {
-        // 每一个gs对象添加方法
-        each: function (fn) {
-            for (var i in this.e) {
-                fn.call(this, this.e[i]);
+        each (fn) {
+            for (let i of this.e) {
+                fn.call(this, i);
             }
             return this;
         },
-        /*
-         参数为空: 获取当前元素的标签内的内的值
-         参数不空: 为当前的元素添加/替换内容
-         */
-        html: function (text) {
+        html (text) {
             if (arguments.length === 0) {
-                var args = [];
+                let args = [];
                 this.each(function (e) {
                     args.push(Gs.trim(e.innerHTML));
                 });
@@ -72,17 +62,13 @@
                 });
             }
         },
-        /*
-         参数为空: 获取元素的值
-         参数不空: 为元素设置value值
-         */
-        value: function (val) {
-            var tName = this.e[0].tagName;
+        value (val) {
+            let tName = this.e[0].tagName;
             if (tName != 'INPUT' && tName != 'TEXTAREA') {
                 console.error('选择对象无效: value()方法的有效对象为INPUT、TEXTAREA');
             }
             if (arguments.length === 0) {
-                var args = [];
+                let args = [];
                 this.each(function (e) {
                     args.push(e.value);
                 });
@@ -98,13 +84,9 @@
                 return this;
             }
         },
-        /*
-         参数为字符串: 获取元素属性
-         参数为对象  : 为元素设置属性值
-         */
-        attr: function (arg) {
+        attr (arg) {
             if (typeof arg === 'string') {
-                var args = [];
+                let args = [];
                 this.each(function (e) {
                     args.push(e.getAttribute(arg));
                 });
@@ -113,79 +95,70 @@
                 } else {
                     return args;
                 }
-            } else if (typeof arg == 'object') {
+            } else if (typeof arg === 'object') {
                 this.each(function (e) {
-                    for (var name in arg) {
-                        e.setAttribute(name, arg[name]);
+                    for (let [key, value] of arg) {
+                        e.setAttribute(key, value);
                     }
                 })
             } else {
                 console.error('参数不合法: attr()方法参数为对象或者字符串');
             }
         },
-        // 查找指定元素下的子元素
-        find: function (arg) {
-            var curObj = this.e[0];
-            var nodeList = curObj.querySelectorAll(arg);
+        find (arg) {
+            let curObj = this.e[0];
+            let nodeList = [...curObj.querySelectorAll(arg)];
             //清除当前对象已保存的元素
             this.e = [];
-            for(var i in nodeList) {
-                if (nodeList[i].tagName !== undefined) {
+            for(let val of nodeList) {
+                if (val.tagName !== undefined) {
                     // 需要删除for in 循环遍历的属性方法
-                    nodeList[i].prevObj = curObj;
-                    this.e.push(nodeList[i]);
+                    val.prevObj = curObj;
+                    this.e.push(val);
                 }
             }
             return this;
         },
-        // 返回当前作用域链的上一个对象
-        end: function () {
-            var nodeList = this.e;
+        end () {
+            let nodeList = [...this.e];
             // 清除当前对象已保存的元素
             this.e = [];
-            for (var i in nodeList) {
-                if (nodeList[i].tagName !== undefined) {
-                    this.e.push(nodeList[i].prevObj);
+            for (let val of nodeList) {
+                if (val.tagName !== undefined) {
+                    this.e.push(val.prevObj);
                 }
             }
             return this;
-
         },
-        // 删除指定元素及其所有子元素
-        remove: function (str) {
+        remove (str) {
             this.each(function (e) {
-                var nodeList = this.e[0].querySelectorAll(str);
-                for (var i in nodeList) {
-                    if (nodeList[i].tagName !== undefined) {
-                        e.removeChild(nodeList[i]);
+                let nodeList = [...this.e[0].querySelectorAll(str)];
+                for (var val of nodeList) {
+                    if (val.tagName !== undefined) {
+                        e.removeChild(val);
                     }
                 }
             });
         },
-        // 为指定元素添加子元素
-        append: function (str) {
+        append (str) {
             if (typeof str !== 'string') {
                 console.error('参数不合法: addChild()方法的参数为字符串');
             }
             this.each(function (e) {
-                var node = document.createElement(str);
+                let node = document.createElement(str);
                 e.appendChild(node);
             });
         },
-        /*
-         参数为字符串: 返回指定样式的值
-         参数为对象  :为指定的元素添加样式
-         */
-        css: function (arg) {
+        css (arg) {
             if (typeof arg === 'string') {
-                var obj = this.e[0];
+                let obj = this.e[0];
                 //判断兼容性
                 if (obj.currentStyle) {
                     return (obj.currentStyle[arg]);
                 } else {
                     return (getComputedStyle(obj,false)[arg]);
                 }
-            } else if (typeof arg == 'object') {
+            } else if (typeof arg === 'object') {
                 this.each(function (e) {
                     for (var name in arg) {
                         if (typeof arg[name] === 'number') {
@@ -198,11 +171,7 @@
                 return this;
             }
         },
-        /*
-         参数为空: 获取元素的高度;
-         参数不空: 设置元素的高度;
-         */
-        height: function (val) {
+        height (val) {
             if (!val) {
                 return this.css('height');
             } else {
@@ -212,11 +181,7 @@
                 return this;
             }
         },
-        /*
-         参数为空: 获取元素的宽度;
-         参数不空: 设置元素的宽度;
-         */
-        width: function (val) {
+        width (val) {
             if (!val) {
                 return this.css('width');
             } else {
@@ -226,12 +191,7 @@
                 return this;
             }
         },
-        /*
-         第三个参数用户判断给指定元素添加/删除事件
-         a: 添加指定事件
-         r: 删除指定事件
-         */
-        event: function(en, fn, type) {
+        event (en, fn, type) {
             // 设置默认参数
             type = 'a' || type;
             switch (type) {
@@ -252,43 +212,38 @@
             }
             return this;
         },
-        click: function (fn) {
+        click (fn) {
             this.event('click', fn);
             return this;
         },
-        mouseover: function (fn) {
+        mouseover (fn) {
             this.event('mouseover', fn);
             return this;
         },
-        mouseout: function (fn) {
+        mouseout (fn) {
             this.event('mouseout', fn);
             return this;
         },
-        mousemove: function (fn) {
+        mousemove (fn) {
             this.event('mousemove', fn);
             return this;
         },
-        mousedown: function(fn) {
+        mousedown (fn) {
             this.event("mousedown", fn);
             return this;
         },
 
-        mouseup: function(fn) {
+        mouseup (fn) {
             this.event("mouseup", fn);
             return this;
         },
-        /*
-         添加动画处理函数
-         */
-        animate: function (obj, fn, spd) {
-            // 设置速度的默认值
-            spd = spd || 20;
+        animate (obj, fn, spd) {
             this.each(function (e) {
-                var flag = true;
+                let flag = true;
                 clearInterval(e.timer);
                 e.timer = setInterval(function () {
-                    for(var attr in obj) {
-                        var icur = 0;
+                    for(let attr in obj) {
+                        let icur = 0;
                         if (attr == 'opacity') {
                             icur = Math.round(parseFloat(Gs.getStyle(e, attr)) * 100);
                         } else {
@@ -312,15 +267,11 @@
                             fn();
                         }
                     }
-                }, spd);
+                }, spd || 20);
             });
             return this;
         },
     };
-
-    /*
-     全局控制函数
-     */
 
     // 判断是否为NaN
     Gs.isNaN = function (obj) {
@@ -334,9 +285,11 @@
     Gs.isNull = function (obj) {
         return obj === null;
     };
+    //判断类型
+    Gs.isType = (obj, type) => Object.prototype.toString.call(obj) === '[object' + type + ']';
     // 将Array-like对象转化为数组
     Gs.toArray = function (obj) {
-        var a = [];
+        let a = [];
         if (obj !== null) {
             var l = obj.length;
             if (l === null || typeof obj === 'string') {
@@ -358,22 +311,18 @@
         }
     };
     // 去除空格
-    Gs.trim = function (str) {
-        return str.replace(/(^\s+)|(\s+$)/g, "")
-    };
+    Gs.trim = (str) => str.replace(/(^\s+)|(\s+$)/g, "");
     // 判断一个字符串是否包含另一个字符串
-    Gs.contains = function (str, it) {
-        return str.indexOf(it) !== -1;
-    };
+    Gs.contains = (str, it) => str.indexOf(it) !== -1;
     // 回调函数列表对象
     Gs.callback = {
         callbacks: [],
-        add: function () {
-            for (var fn in arguments) {
-                this.callbacks.push(arguments[fn]);
+        add () {
+            for (let fn of arguments) {
+                this.callbacks.push(fn);
             }
         },
-        fire: function () {
+        fire () {
             this.callbacks.forEach(function (fn) {
                 fn();
             });
@@ -381,7 +330,7 @@
     };
     // 加载函数
     Gs.ready = function (func) {
-        var oldonload = window.onload;
+        let oldonload = window.onload;
         if (typeof window.onload !== 'function') {
             window.onload = func;
         } else {
@@ -396,17 +345,17 @@
     Gs.module = {
         moduleMap: [],
         fileMap: [],
-        noop: function () {},
+        noop () {},
         // 定义模块
-        define: function (name, dependencies, fn) {
+        define (name, dependencies, fn) {
             /*
-              name         : 模块名
-              dependencies : 模块的依赖项
-              fn      : 模块的函数主体
-            */
-            var moduleMap = this.moduleMap;
+             name         : 模块名
+             dependencies : 模块的依赖项
+             fn      : 模块的函数主体
+             */
+            let moduleMap = this.moduleMap;
             if (!moduleMap[name]) {
-                var module = {
+                let module = {
                     name: name,
                     dependencies: dependencies,
                     fn: fn
@@ -417,18 +366,18 @@
 
         },
         // 加载模块
-        require: function (pathArr, callback) {
-            var fileMap = this.fileMap;
-            for (var i = 0; i < pathArr.length; i++) {
-                var path = pathArr[i];
+        require (pathArr, callback) {
+            let fileMap = this.fileMap;
+            for (let i = 0; i < pathArr.length; i++) {
+                let path = pathArr[i];
 
                 if (!fileMap[path]) {
-                    var head = document.getElementsByTagName('head')[0];
-                    var script = document.createElement('script');
+                    let head = document.getElementsByTagName('head')[0];
+                    let script = document.createElement('script');
                     script.type = 'text/javascript';
                     script.async = 'true';
                     script.src = './modules/' + path + '.js';
-                    script.onload = function (argument) {
+                    script.onload = function () {
                         fileMap[path] = true;
                         head.removeChild(script);
                         checkAllFiles();
@@ -438,8 +387,8 @@
             }
 
             function checkAllFiles () {
-                var allLoaded = true;
-                for (var i = 0; i < pathArr.length; i++) {
+                let allLoaded = true;
+                for (let i = 0; i < pathArr.length; i++) {
                     if (!fileMap[pathArr[i]]) {
                         allLoaded = false;
                         break;
@@ -452,13 +401,13 @@
         },
         // 使用模块
         use: function (name) {
-            var moduleMap = this.moduleMap;
-            var noop = this.noop();
+            let moduleMap = this.moduleMap;
+            let noop = this.noop();
             // 存储要使用的模块
-            var module = moduleMap[name];
+            let module = moduleMap[name];
 
             if (!module.entity) {
-                var args = [];
+                let args = [];
                 // 找到要依赖的模块
                 for (var i = 0; i < module.dependencies.length; i++) {
                     if (moduleMap[module.dependencies[i]].entity) {
@@ -472,7 +421,5 @@
             return module.entity;
         }
     };
-
-    
-})(window);
-
+    window.G = Gs = (sel) => new gs(sel);
+}
