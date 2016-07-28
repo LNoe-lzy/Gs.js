@@ -400,7 +400,7 @@
             }
         },
         // 使用模块
-        use: function (name) {
+        use (name) {
             let moduleMap = this.moduleMap;
             let noop = this.noop();
             // 存储要使用的模块
