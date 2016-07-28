@@ -113,7 +113,7 @@
                 } else {
                     return args;
                 }
-            } else if (typeof arg == 'object') {
+            } else if (typeof arg === 'object') {
                 this.each(function (e) {
                     for (var name in arg) {
                         e.setAttribute(name, arg[name]);
@@ -185,7 +185,7 @@
                 } else {
                     return (getComputedStyle(obj,false)[arg]);
                 }
-            } else if (typeof arg == 'object') {
+            } else if (typeof arg === 'object') {
                 this.each(function (e) {
                     for (var name in arg) {
                         if (typeof arg[name] === 'number') {
@@ -231,7 +231,7 @@
          a: 添加指定事件
          r: 删除指定事件
          */
-        event: function(en, fn, type) {
+        event: function (en, fn, type) {
             // 设置默认参数
             type = 'a' || type;
             switch (type) {
@@ -268,12 +268,12 @@
             this.event('mousemove', fn);
             return this;
         },
-        mousedown: function(fn) {
+        mousedown: function (fn) {
             this.event("mousedown", fn);
             return this;
         },
 
-        mouseup: function(fn) {
+        mouseup: function (fn) {
             this.event("mouseup", fn);
             return this;
         },
@@ -281,8 +281,6 @@
          添加动画处理函数
          */
         animate: function (obj, fn, spd) {
-            // 设置速度的默认值
-            spd = spd || 20;
             this.each(function (e) {
                 var flag = true;
                 clearInterval(e.timer);
@@ -312,7 +310,7 @@
                             fn();
                         }
                     }
-                }, spd);
+                }, spd || 20);
             });
             return this;
         },
@@ -333,6 +331,10 @@
     // 判断是否为null
     Gs.isNull = function (obj) {
         return obj === null;
+    };
+    //判断类型
+    Gs.isType = function (obj, type) {
+        return Object.prototype.toString.call(obj) === '[object' + type + ']';
     };
     // 将Array-like对象转化为数组
     Gs.toArray = function (obj) {
@@ -428,7 +430,7 @@
                     script.type = 'text/javascript';
                     script.async = 'true';
                     script.src = './modules/' + path + '.js';
-                    script.onload = function (argument) {
+                    script.onload = function () {
                         fileMap[path] = true;
                         head.removeChild(script);
                         checkAllFiles();
