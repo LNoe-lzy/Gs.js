@@ -160,7 +160,7 @@
                 }
             } else if (typeof arg === 'object') {
                 this.each(function (e) {
-                    for (var name in arg) {
+                    for (var name of Object.keys(arg)) {
                         if (typeof arg[name] === 'number') {
                             e.style[name] = arg[name] + 'px';
                         } else {
@@ -242,7 +242,7 @@
                 let flag = true;
                 clearInterval(e.timer);
                 e.timer = setInterval(function () {
-                    for(let attr in obj) {
+                    for(let attr of Object.keys(obj)) {
                         let icur = 0;
                         if (attr == 'opacity') {
                             icur = Math.round(parseFloat(Gs.getStyle(e, attr)) * 100);
@@ -353,9 +353,10 @@
              dependencies : 模块的依赖项
              fn      : 模块的函数主体
              */
-            let moduleMap = this.moduleMap;
+            let moduleMap = this.moduleMap,
+                module;
             if (!moduleMap[name]) {
-                let module = {
+                module = {
                     name: name,
                     dependencies: dependencies,
                     fn: fn

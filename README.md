@@ -58,6 +58,8 @@
 `G.getStyle(obj, 'width');`
 * Gs.trim: 去除字符串的多余的空格;		
 `G.trim(str);`
+* Gs.contains: 判断字符串中是否包含另一字符串		
+`G.contains('hello world', 'hello');`
 * Gs.callback.add: 添加指定函数到函数队列;		
 `G.callback.add(fn);`
 * Gs.callback.fire: 执行函数队列的函数;		
