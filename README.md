@@ -72,3 +72,5 @@
 `G.module.use(modulename);`
 * Gs.module.require: 加载模块;		
 `G.module.require('module', fn);`
+* Gs.single: 单例模式;      
+`var a = function () {}; var b = Gs.single(a); b();`
