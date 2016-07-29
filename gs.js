@@ -343,6 +343,12 @@
             }
         }
     };
+    Gs.single = function (fn) {
+        let result;
+        return function () {
+            return result || (result = fn.apply(this, arguments));
+        }
+    };
 
     //定义模块机制
     Gs.module = {
