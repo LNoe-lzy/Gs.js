@@ -393,8 +393,21 @@
             }
         }
     };
-
-    //定义模块机制
+    /*
+       单例模式
+       方法:
+           var a = function () {};
+           var b = Gs.single(a);
+           b();
+     */
+    Gs.single = function (fn) {
+        var result;
+        return function () {
+            console.log(this);
+            return result || (result = fn.apply(this, arguments));
+        }
+    };
+    // 定义模块机制
     Gs.module = {
         moduleMap: [],
         fileMap: [],
@@ -406,9 +419,10 @@
               dependencies : 模块的依赖项
               fn      : 模块的函数主体
             */
-            var moduleMap = this.moduleMap;
+            var moduleMap = this.moduleMap,
+                module;
             if (!moduleMap[name]) {
-                var module = {
+                module = {
                     name: name,
                     dependencies: dependencies,
                     fn: fn
