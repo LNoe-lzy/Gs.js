@@ -3,9 +3,6 @@
  * ES6版本gs.js
  */
 {
-    let  Gs = {};
-    // 版本号
-    Gs.version = 'es6 1.0';
     // 创建gs类
     let gs = function (sel) {
         // this.e 为当前的获取到的html元素
@@ -273,6 +270,12 @@
         },
     };
 
+    window.G = Gs = (sel) => new gs(sel);
+
+
+    // 版本号
+    Gs.version = 'es6 1.0';
+
     // 判断是否为NaN
     Gs.isNaN = function (obj) {
         return obj !== obj;
@@ -313,7 +316,7 @@
     // 去除空格
     Gs.trim = (str) => str.replace(/(^\s+)|(\s+$)/g, "");
     // 判断一个字符串是否包含另一个字符串
-    Gs.contains = (str, it) => str.indexOf(it) !== -1;
+    Gs.contains = (str, it) => str.includes(it);
     // 回调函数列表对象
     Gs.callback = {
         callbacks: [],
@@ -401,7 +404,7 @@
             }
         },
         // 使用模块
-        use (name) {
+        use: function (name) {
             let moduleMap = this.moduleMap;
             let noop = this.noop();
             // 存储要使用的模块
@@ -422,5 +425,4 @@
             return module.entity;
         }
     };
-    window.G = Gs = (sel) => new gs(sel);
 }
