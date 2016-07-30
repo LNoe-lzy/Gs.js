@@ -29,11 +29,8 @@
             console.error('选择对象无效:' + sel);
             return;
         }
-        for(var i in nodeList) {
-            //需要删除for in 循环遍历的属性方法
-            if (nodeList[i].tagName !== undefined) {
-                this.e.push(nodeList[i]);
-            }
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+            this.e.push(nodeList[i]);
         }
 
         return this;
@@ -129,12 +126,9 @@
             var nodeList = curObj.querySelectorAll(arg);
             //清除当前对象已保存的元素
             this.e = [];
-            for(var i in nodeList) {
-                if (nodeList[i].tagName !== undefined) {
-                    // 需要删除for in 循环遍历的属性方法
-                    nodeList[i].prevObj = curObj;
-                    this.e.push(nodeList[i]);
-                }
+            for (var i = 0, l = nodeList.length; i < l; i++) {
+                nodeList[i].prevObj = curObj;
+                this.e.push(nodeList[i]);
             }
             return this;
         },
@@ -155,10 +149,8 @@
         remove: function (str) {
             this.each(function (e) {
                 var nodeList = this.e[0].querySelectorAll(str);
-                for (var i in nodeList) {
-                    if (nodeList[i].tagName !== undefined) {
-                        e.removeChild(nodeList[i]);
-                    }
+                for (var i = 0, l = nodeList.length; i < l; i++) {
+                    e.removeChild(nodeList[i]);
                 }
             });
         },
