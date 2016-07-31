@@ -311,7 +311,29 @@
     /*
      全局控制函数
      */
-
+    // 迭代器方法
+    Gs.each = function (obj, fn) {
+        if (obj !== null) {
+            var value,
+                l = obj.length;
+            if (l !== null && typeof obj !== 'string') {
+                for (var i = 0; i < l; i ++) {
+                    // 传入元素下标和元素的值
+                    value = fn.call(obj[i], i, obj[i]);
+                    if (value === false) {
+                        break;
+                    }
+                }
+            } else {
+                for (var key in obj) {
+                    value = fn.call(obj[key], key, obj[key]);
+                    if (value === false) {
+                        break;
+                    }
+                }
+            }
+        }
+    };
     // 判断是否为NaN
     Gs.isNaN = function (obj) {
         return obj !== obj;
