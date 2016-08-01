@@ -316,7 +316,7 @@
         if (obj !== null) {
             var value,
                 l = obj.length;
-            if (l !== null && (typeof obj !== 'string')) {
+            if (Gs.isArrayLike(obj)) {
                 for (var i = 0; i < l; i ++) {
                     // 传入元素下标和元素的值
                     value = fn.call(obj[i], i, obj[i]);
@@ -346,7 +346,11 @@
     Gs.isNull = function (obj) {
         return obj === null;
     };
-    //判断类型
+    // 判断是否为Arraylike
+    Gs.isArrayLike = function (obj) {
+       return (obj.length && (typeof obj !== 'string'));
+    };
+    // 判断类型
     Gs.isType = function (obj, type) {
         return Object.prototype.toString.call(obj) === '[object' + type + ']';
     };
@@ -354,8 +358,7 @@
     Gs.toArray = function (obj) {
         var a = [];
         if (obj !== null) {
-            var l = obj.length;
-            if (l === null || typeof obj === 'string') {
+            if (!Gs.isArrayLike(obj)) {
                 a[0] = obj;
             } else {
                 while (l) {
@@ -434,17 +437,16 @@
         }
     };
     // 定义模块机制
-    Gs.module = {
-        moduleMap: [],
-        fileMap: [],
-        noop: function () {},
-        // 定义模块
-        define: function (name, dependencies, fn) {
+    Gs.module = (function () {
+        var moduleMap = [],
+            fileMap = [],
+            noop = function () {};
+        var define = function (name, dependencies, fn) {
             /*
-              name         : 模块名
-              dependencies : 模块的依赖项
-              fn      : 模块的函数主体
-            */
+             name         : 模块名
+             dependencies : 模块的依赖项
+             fn      : 模块的函数主体
+             */
             var moduleMap = this.moduleMap,
                 module;
             if (!moduleMap[name]) {
@@ -457,9 +459,9 @@
             }
             return moduleMap[name];
 
-        },
+        };
         // 加载模块
-        require: function (pathArr, callback) {
+        var require = function (pathArr, callback) {
             var fileMap = this.fileMap;
             for (var i = 0; i < pathArr.length; i++) {
                 var path = pathArr[i];
@@ -491,9 +493,9 @@
                     callback();
                 }
             }
-        },
+        };
         // 使用模块
-        use: function (name) {
+        var use = function (name) {
             var moduleMap = this.moduleMap;
             var noop = this.noop();
             // 存储要使用的模块
@@ -512,9 +514,12 @@
                 module.entity = module.fn.apply(noop, args);
             }
             return module.entity;
-        }
-    };
-
-    
+        };
+        return {
+            require: require,
+            use: use,
+            define: define
+        };
+    })();
 })(window);
 
