@@ -187,9 +187,8 @@
                 return this;
             }
         },
-        event (en, fn, type) {
+        event (en, fn, type = 'a') {
             // 设置默认参数
-            type = 'a' || type;
             switch (type) {
                 case 'a':
                     document.addEventListener ? this.each(function(eles) {
@@ -233,7 +232,7 @@
             this.event("mouseup", fn);
             return this;
         },
-        animate (obj, fn, spd) {
+        animate (obj, fn, spd = 20) {
             this.each(function (e) {
                 let flag = true;
                 clearInterval(e.timer);
@@ -263,7 +262,7 @@
                             fn();
                         }
                     }
-                }, spd || 20);
+                }, spd);
             });
             return this;
         },
@@ -279,7 +278,7 @@
         if (obj !== null) {
             let value,
                 l = obj.length;
-            if (l !== null && typeof obj !== 'string') {
+            if (Gs.isArrayLike(obj)) {
                 for (let i = 0; i < l; i ++) {
                     // 传入元素下标和元素的值
                     value = fn.call(obj[i], i, obj[i]);
@@ -309,6 +308,8 @@
     Gs.isNull = function (obj) {
         return obj === null;
     };
+    // 判断ArrayLike
+    Gs.isArrayLike = (obj) => (obj.length && (typeof obj !== 'string'));
     //判断类型
     Gs.isType = (obj, type) => Object.prototype.toString.call(obj) === '[object' + type + ']';
     // 将Array-like对象转化为数组
@@ -328,8 +329,8 @@
     // 回调函数列表对象
     Gs.callback = {
         callbacks: [],
-        add () {
-            for (let fn of arguments) {
+        add (...val) {
+            for (let fn of val) {
                 this.callbacks.push(fn);
             }
         },
