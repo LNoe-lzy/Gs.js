@@ -316,7 +316,7 @@
         if (obj !== null) {
             var value,
                 l = obj.length;
-            if (l !== null && typeof obj !== 'string') {
+            if (l !== null && (typeof obj !== 'string')) {
                 for (var i = 0; i < l; i ++) {
                     // 传入元素下标和元素的值
                     value = fn.call(obj[i], i, obj[i]);
@@ -382,19 +382,31 @@
         return str.indexOf(it) !== -1;
     };
     // 回调函数列表对象
-    Gs.callback = {
-        callbacks: [],
-        add: function () {
-            for (var fn in arguments) {
-                this.callbacks.push(arguments[fn]);
-            }
-        },
-        fire: function () {
-            this.callbacks.forEach(function (fn) {
+    Gs.callback = (function () {
+        var callback = [];
+        var add = function () {
+           for (var fn in arguments) {
+               callback.push(arguments[fn]);
+           }
+        };
+        var fire = function () {
+            callback.forEach(function (fn) {
                 fn();
             });
-        }
-    };
+        };
+        var pop = function () {
+           callback.pop();
+        };
+        var remove = function () {
+           callback = [];
+        };
+        return {
+            add: add,
+            fire: fire,
+            pop: pop,
+            remove: remove
+        };
+    })();
     // 加载函数
     Gs.ready = function (func) {
         var oldonload = window.onload;
