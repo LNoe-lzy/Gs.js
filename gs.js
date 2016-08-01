@@ -23,7 +23,6 @@
             console.error('选择对象无效:' + sel);
             return;
         }
-
         for (let value of nodeList) {
             this.e.push(value);
         }
@@ -313,20 +312,7 @@
     //判断类型
     Gs.isType = (obj, type) => Object.prototype.toString.call(obj) === '[object' + type + ']';
     // 将Array-like对象转化为数组
-    Gs.toArray = function (obj) {
-        let a = [];
-        if (obj !== null) {
-            var l = obj.length;
-            if (l === null || typeof obj === 'string') {
-                a[0] = obj;
-            } else {
-                while (l) {
-                    a[--l] = obj[l];
-                }
-            }
-        }
-        return a;
-    };
+    Gs.toArray = (obj) => Array.from(obj);
     // 获取元素的属性
     Gs.getStyle = function (obj, attr) {
         if (obj.currentStyle) {
@@ -351,6 +337,12 @@
             this.callbacks.forEach(function (fn) {
                 fn();
             });
+        },
+        pop () {
+            this.callbacks.pop();
+        },
+        remove () {
+            this.callbacks = [];
         }
     };
     // 加载函数
