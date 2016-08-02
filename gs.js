@@ -3,40 +3,36 @@
  * ES6版本gs.js
  */
 {
-    // 创建gs类
-    let gs = function (sel) {
-        // this.e 为当前的获取到的html元素
-        this.e = [];
+    // 创建G类
+    class G {
+        constructor (sel) {
+            this.e = [];
+            if (!sel) {
+                console.error('选择对象不能为"", undefined, null!');
+                return;
+            }
+            // 处理this情况
+            if (typeof sel === 'object') {
+                this.e.push(sel);
+                return;
+            }
+            let nodeList = [...document.querySelectorAll(sel)];
+            if (nodeList.length === 0) {
+                console.error('选择对象无效:' + sel);
+                return;
+            }
+            for (let value of nodeList) {
+                this.e.push(value);
+            }
+        }
 
-        // 如果输入 '', undefined, null;
-        if (!sel) {
-            console.error('选择对象不能为"", undefined, null!');
-            return;
-        }
-        // 处理this情况
-        if (typeof sel === 'object') {
-            this.e.push(sel);
-            return;
-        }
-        let nodeList = [...document.querySelectorAll(sel)];
-        if (nodeList.length === 0) {
-            console.error('选择对象无效:' + sel);
-            return;
-        }
-        for (let value of nodeList) {
-            this.e.push(value);
-        }
-
-        return this;
-    };
-
-    gs.prototype = {
         each (fn) {
             for (let i of this.e) {
                 fn.call(this, i);
             }
             return this;
-        },
+        }
+
         html (text) {
             if (arguments.length === 0) {
                 let args = [];
@@ -57,7 +53,8 @@
                     e.innerHTML = text;
                 });
             }
-        },
+        }
+
         value (val) {
             let tName = this.e[0].tagName;
             if (tName != 'INPUT' && tName != 'TEXTAREA') {
@@ -79,7 +76,8 @@
                 });
                 return this;
             }
-        },
+        }
+
         attr (arg) {
             if (typeof arg === 'string') {
                 let args = [];
@@ -100,7 +98,8 @@
             } else {
                 console.error('参数不合法: attr()方法参数为对象或者字符串');
             }
-        },
+        }
+
         find (arg) {
             let curObj = this.e[0];
             let nodeList = [...curObj.querySelectorAll(arg)];
@@ -114,7 +113,8 @@
                 }
             }
             return this;
-        },
+        }
+
         end () {
             let nodeList = [...this.e];
             // 清除当前对象已保存的元素
@@ -125,7 +125,8 @@
                 }
             }
             return this;
-        },
+        }
+
         remove (str) {
             this.each(function (e) {
                 let nodeList = [...this.e[0].querySelectorAll(str)];
@@ -135,7 +136,8 @@
                     }
                 }
             });
-        },
+        }
+
         append (str) {
             if (typeof str !== 'string') {
                 console.error('参数不合法: addChild()方法的参数为字符串');
@@ -144,7 +146,8 @@
                 let node = document.createElement(str);
                 e.appendChild(node);
             });
-        },
+        }
+
         css (arg) {
             if (typeof arg === 'string') {
                 let obj = this.e[0];
@@ -166,7 +169,8 @@
                 });
                 return this;
             }
-        },
+        }
+
         height (val) {
             if (!val) {
                 return this.css('height');
@@ -176,7 +180,8 @@
                 });
                 return this;
             }
-        },
+        }
+
         width (val) {
             if (!val) {
                 return this.css('width');
@@ -186,7 +191,8 @@
                 });
                 return this;
             }
-        },
+        }
+
         event (en, fn, type = 'a') {
             // 设置默认参数
             switch (type) {
@@ -206,32 +212,38 @@
                     break;
             }
             return this;
-        },
+        }
+
         click (fn) {
             this.event('click', fn);
             return this;
-        },
+        }
+
         mouseover (fn) {
             this.event('mouseover', fn);
             return this;
-        },
+        }
+
         mouseout (fn) {
             this.event('mouseout', fn);
             return this;
-        },
+        }
+
         mousemove (fn) {
             this.event('mousemove', fn);
             return this;
-        },
+        }
+
         mousedown (fn) {
             this.event("mousedown", fn);
             return this;
-        },
+        }
 
         mouseup (fn) {
             this.event("mouseup", fn);
             return this;
-        },
+        }
+
         animate (obj, fn, spd = 20) {
             this.each(function (e) {
                 let flag = true;
@@ -265,11 +277,10 @@
                 }, spd);
             });
             return this;
-        },
-    };
+        }
+    }
 
-    window.G = Gs = (sel) => new gs(sel);
-
+    window.G = Gs = (sel) => new G(sel);
 
     // 版本号
     Gs.version = 'es6 1.0';
@@ -313,7 +324,7 @@
     //判断类型
     Gs.isType = (obj, type) => Object.prototype.toString.call(obj) === '[object' + type + ']';
     // 将Array-like对象转化为数组
-    Gs.toArray = (obj) => Array.from(obj);
+    Gs.toArray = (obj) => {Array.from(obj)};
     // 获取元素的属性
     Gs.getStyle = function (obj, attr) {
         if (obj.currentStyle) {
