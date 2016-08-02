@@ -43,11 +43,7 @@
                  选择单个对象: 返回值
                  选择多个对象: 返回数组
                  */
-                if (args.length === 1) {
-                    return args[0];
-                } else {
-                    return args;
-                }
+                return (args.length === 1 ? args[0] : args);
             } else if (arguments.length === 1) {
                 this.each(function (e) {
                     e.innerHTML = text;
@@ -65,11 +61,7 @@
                 this.each(function (e) {
                     args.push(e.value);
                 });
-                if (args.length === 1) {
-                    return args[0];
-                } else {
-                    return args;
-                }
+                return (args.length === 1 ? args[0] : args);
             } else if (arguments.length === 1) {
                 this.each(function (e) {
                     e.value = val;
@@ -84,11 +76,7 @@
                 this.each(function (e) {
                     args.push(e.getAttribute(arg));
                 });
-                if (args.length === 1) {
-                    return args[0];
-                } else {
-                    return args;
-                }
+                return (args.length === 1 ? args[0] : args);
             } else if (typeof arg === 'object') {
                 this.each(function (e) {
                     for (let [key, value] of arg) {
@@ -150,13 +138,16 @@
 
         css (arg) {
             if (typeof arg === 'string') {
-                let obj = this.e[0];
-                //判断兼容性
-                if (obj.currentStyle) {
-                    return (obj.currentStyle[arg]);
-                } else {
-                    return (getComputedStyle(obj,false)[arg]);
-                }
+                this.each(function (e) {
+                    var args = [];
+                    //判断兼容性
+                    if (e.currentStyle) {
+                        args.push(e.currentStyle[arg]);
+                    } else {
+                        args.push(getComputedStyle(obj,false)[arg]);
+                    }
+                    return (args.length === 1 ? args[0] : args);
+                });
             } else if (typeof arg === 'object') {
                 this.each(function (e) {
                     for (var name of Object.keys(arg)) {
