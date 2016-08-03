@@ -238,9 +238,9 @@
 
         animate (obj, fn, spd = 20) {
             this.each(function (e) {
-                let flag = true;
                 clearInterval(e.timer);
                 e.timer = setInterval(function () {
+                    let flag = true;
                     for(let attr of Object.keys(obj)) {
                         let icur = 0;
                         if (attr == 'opacity') {
@@ -267,6 +267,44 @@
                         }
                     }
                 }, spd);
+            });
+            return this;
+        }
+
+        fadeIn (speed = 10, opacity = 100) {
+            this.each(function (e) {
+                // 显示元素,并将元素值为0透明度(不可见)
+                e.style.display = 'block';
+                Gs.setOpacity(e, 0);
+                //初始化透明度变化值为0
+                let val = 0;
+                // 循环将透明值以5递增,即淡入效果
+                (function fn() {
+                    Gs.setOpacity(e, val);
+                    val += 5;
+                    if (val <= opacity) {
+                        setTimeout(fn, speed)
+                    }
+                })();
+            });
+            return this;
+        }
+
+        fadeOut (speed = 10, opacity = 0) {
+            this.each(function (e) {
+                // 初始化透明度变化值为0
+                let val = 100;
+                // 循环将透明值以5递减,即淡出效果
+                (function fn() {
+                    Gs.setOpacity(e, val);
+                    val -= 5;
+                    if (val >= opacity) {
+                        setTimeout(fn, speed);
+                    } else if (val < 0) {
+                        // 元素透明度为0后隐藏元素
+                        e.style.display = 'none';
+                    }
+                })();
             });
             return this;
         }
@@ -326,6 +364,10 @@
         } else {
             return getComputedStyle(obj,false)[attr];
         }
+    };
+    // 设置元素的透明度
+    Gs.setOpacity = function (obj, o) {
+        obj.filters ? obj.style.filter = 'alpha(opacity=' + o + ')' : obj.style.opacity = o / 100;
     };
     // 去除空格
     Gs.trim = (str) => str.replace(/(^\s+)|(\s+$)/g, "");
