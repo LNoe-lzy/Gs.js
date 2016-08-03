@@ -2,6 +2,7 @@
  * Created by lizongyuan on 16/7/27.
  * ES6版本gs.js
  */
+'use strict';
 {
     // 创建G类
     class G {
@@ -51,7 +52,7 @@
             }
         }
 
-        value (val) {
+        val (val) {
             let tName = this.e[0].tagName;
             if (tName != 'INPUT' && tName != 'TEXTAREA') {
                 console.error('选择对象无效: value()方法的有效对象为INPUT、TEXTAREA');
@@ -139,7 +140,7 @@
         css (arg) {
             if (typeof arg === 'string') {
                 this.each(function (e) {
-                    var args = [];
+                    let args = [];
                     //判断兼容性
                     if (e.currentStyle) {
                         args.push(e.currentStyle[arg]);
@@ -271,6 +272,8 @@
         }
     }
 
+    let Gs;
+
     window.G = Gs = (sel) => new G(sel);
 
     // 版本号
@@ -328,6 +331,18 @@
     Gs.trim = (str) => str.replace(/(^\s+)|(\s+$)/g, "");
     // 判断一个字符串是否包含另一个字符串
     Gs.contains = (str, it) => str.includes(it);
+    // 加载函数
+    Gs.ready = function (func) {
+        let oldonload = window.onload;
+        if (typeof window.onload !== 'function') {
+            window.onload = func;
+        } else {
+            window.onload = function () {
+                oldonload();
+                func();
+            }
+        }
+    };
     // 回调函数列表对象
     Gs.callback = {
         callbacks: [],
@@ -348,22 +363,26 @@
             this.callbacks = [];
         }
     };
-    // 加载函数
-    Gs.ready = function (func) {
-        let oldonload = window.onload;
-        if (typeof window.onload !== 'function') {
-            window.onload = func;
-        } else {
-            window.onload = function () {
-                oldonload();
-                func();
+    // 定义函数扩展机制
+    Gs.fn = {
+       single (fn) {
+           let result;
+           return function () {
+               return result || (result = fn.apply(this, arguments));
+           }
+       },
+        before (fn, before) {
+           return function () {
+               before.apply(this, arguments);
+               return fn.apply(this, arguments);
+           }
+        },
+        after (fn, after) {
+            return function () {
+                let ret = fn.apply(this, arguments);
+                after.apply(this, arguments);
+                return ret;
             }
-        }
-    };
-    Gs.single = function (fn) {
-        let result;
-        return function () {
-            return result || (result = fn.apply(this, arguments));
         }
     };
 
@@ -448,4 +467,5 @@
             return module.entity;
         }
     };
+
 }
