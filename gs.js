@@ -270,9 +270,9 @@
          */
         animate: function (obj, fn, spd) {
             this.each(function (e) {
-                var flag = true;
                 clearInterval(e.timer);
                 e.timer = setInterval(function () {
+                    var flag = true;
                     for(var attr in obj) {
                         var icur = 0;
                         if (attr === 'opacity') {
@@ -298,7 +298,7 @@
                             fn();
                         }
                     }
-                }, spd || 20);
+                }, spd || 10);
             });
             return this;
         },
