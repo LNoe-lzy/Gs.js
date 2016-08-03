@@ -1,8 +1,10 @@
 ;(function (window) {
+    'use strict';
     /*
      声明全局变量指定接口 'G'
      sel: 用户指定的元素
      */
+    var Gs;
     window.G = Gs = function (sel) {
         return new gs(sel)
     };
@@ -29,8 +31,11 @@
             console.error('选择对象无效:' + sel);
             return;
         }
-        for (var i = 0, l = nodeList.length; i < l; i++) {
-            this.e.push(nodeList[i]);
+        // for (var i = 0, l = nodeList.length; i < l; i++) {
+        //     this.e.push(nodeList[i]);
+        // }
+        for (var i = 0, node; node = nodeList[i++];) {
+            this.e.push(node);
         }
 
         return this;
@@ -69,7 +74,7 @@
          参数为空: 获取元素的值
          参数不空: 为元素设置value值
          */
-        value: function (val) {
+        val: function (val) {
             var tName = this.e[0].tagName;
             if (tName != 'INPUT' && tName != 'TEXTAREA') {
                 console.error('选择对象无效: value()方法的有效对象为INPUT、TEXTAREA');
@@ -375,6 +380,18 @@
     Gs.contains = function (str, it) {
         return str.indexOf(it) !== -1;
     };
+    // 加载函数
+    Gs.ready = function (func) {
+        var oldonload = window.onload;
+        if (typeof window.onload !== 'function') {
+            window.onload = func;
+        } else {
+            window.onload = function () {
+                oldonload();
+                func();
+            }
+        }
+    };
     // 回调函数列表对象
     Gs.callback = (function () {
         var callback = [];
@@ -401,31 +418,47 @@
             remove: remove
         };
     })();
-    // 加载函数
-    Gs.ready = function (func) {
-        var oldonload = window.onload;
-        if (typeof window.onload !== 'function') {
-            window.onload = func;
-        } else {
-            window.onload = function () {
-                oldonload();
-                func();
+    // 定义函数扩展机制
+    Gs.fn = (function () {
+        /*
+          单例模式
+          方法:
+              var a = function () {};
+              var b = Gs.single(a);
+              b();
+         */
+        var single = function (fn) {
+            var result;
+            return function () {
+                return result || (result = fn.apply(this, arguments));
             }
+        };
+        /*
+          装饰模式
+          方法:
+              var a = function () {};
+              a = Gs.before(a, function(){});
+              a();
+         */
+        var before = function (fn, before) {
+            return function () {
+                before.apply(this, arguments);
+                return fn.apply(this, arguments);
+            }
+        };
+        var after = function (fn, after) {
+            return function () {
+                var ret = fn.apply(this, arguments);
+                after.apply(this, arguments);
+                return ret;
+            }
+        };
+        return {
+            single: single,
+            before: before,
+            after: after
         }
-    };
-    /*
-       单例模式
-       方法:
-           var a = function () {};
-           var b = Gs.single(a);
-           b();
-     */
-    Gs.single = function (fn) {
-        var result;
-        return function () {
-            return result || (result = fn.apply(this, arguments));
-        }
-    };
+    })();
     // 定义模块机制
     Gs.module = (function () {
         var moduleMap = [],
