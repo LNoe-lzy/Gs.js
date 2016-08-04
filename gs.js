@@ -436,6 +436,30 @@
             }
         }
     };
+    /*
+      ajax
+      data = {
+         type: GET / POST,
+         url: '',
+         data: {},
+         async: true / false
+         success: function () {},
+         error: function () {]
+      }
+     */
+    Gs.ajax = function (data) {
+        var xhr;
+        if (window.XMLHttpRequest) {
+            xhr = new XMLHttpReques();
+        } else {
+            xhr = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+        xhr.open(data.type, data.url, data.async);
+        xhr.onreadystatechange = function () {
+
+        }
+    };
+
     // 回调函数列表对象
     Gs.callback = (function () {
         var callback = [];
@@ -514,8 +538,7 @@
              dependencies : 模块的依赖项
              fn      : 模块的函数主体
              */
-            var moduleMap = this.moduleMap,
-                module;
+            var module;
             if (!moduleMap[name]) {
                 module = {
                     name: name,
@@ -529,7 +552,6 @@
         };
         // 加载模块
         var require = function (pathArr, callback) {
-            var fileMap = this.fileMap;
             for (var i = 0; i < pathArr.length; i++) {
                 var path = pathArr[i];
 
@@ -563,8 +585,6 @@
         };
         // 使用模块
         var use = function (name) {
-            var moduleMap = this.moduleMap;
-            var noop = this.noop();
             // 存储要使用的模块
             var module = moduleMap[name];
 
