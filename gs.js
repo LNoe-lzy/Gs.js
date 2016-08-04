@@ -449,17 +449,29 @@
      */
     Gs.ajax = function (data) {
         var xhr;
-        if (window.XMLHttpRequest) {
-            xhr = new XMLHttpReques();
-        } else {
-            xhr = new ActiveXObject('Microsoft.XMLHTTP');
-        }
-        xhr.open(data.type, data.url, data.async);
+        xhr = (window.XMLHttpRequest) ? (new XMLHttpRequest()) : (new ActiveXObject('Microsoft.XMLHTTP'));
         xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
 
-        }
+                }
+            }
+        };
+        xhr.open(data.type, data.url, data.async);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send((data.type === 'POST') ? Gs.serialize(data.data) : null);
     };
-
+    // 格式化ajax数据
+    Gs.serialize = function (obj) {
+        if (typeof obj === "object") {
+            var str = "";
+            for (var key in obj) {
+                str += key + "=" + obj[key] + "&" ;
+            }
+            obj = str.substr(0, str.length-1);
+        }
+        return obj;
+    };
     // 回调函数列表对象
     Gs.callback = (function () {
         var callback = [];
