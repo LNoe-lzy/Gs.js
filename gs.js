@@ -620,5 +620,15 @@
             define: define
         };
     })();
+    // 获取浏览器的信息
+    Gs.browser = function () {
+        var b = {},
+            u = navigator.userAgent.toLowerCase(),
+            e =/(msie|firefox|chrome|opera|version).*?([\d.]+)/,
+            m = u.match(e);
+        b.browser = m[1].replace(/version/, "'safari");
+        b.version = m[2];
+        return b;
+    };
 })(window);
 
