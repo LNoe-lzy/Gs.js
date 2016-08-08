@@ -579,6 +579,101 @@
         },
         unset (name, path, domain, secure) {
             this.set(name, "", new Date(0), path, domain, secure);
+        },
+        child: {
+            getAll (name) {
+                var cookieName = encodeURIComponent(name) + '=',
+                    cookieStart = document.cookie.indexOf(cookieName),
+                    cookieValue = null,
+                    cookieEnd,
+                    subCookies,
+                    parts,
+                    result = {};
+                if (cookieStart > -1) {
+                    cookieEnd = document.cookie.indexOf(';', cookieStart);
+                    if (cookieEnd == -1) {
+                        cookieEnd = document.cookie.length;
+                    }
+                    // 取出cookie字符串值
+                    cookieValue = document.cookie.substring(cookieStart + cookieName.length, cookieEnd);
+                    if (cookieValue.length > 0) {
+                        // 用&将cookie值分隔成数组
+                        subCookies = cookieValue.split('&');
+                        for (var i=0, l = subCookies.length; i < l; i++) {
+                            //等号分隔出键值对
+                            parts = subCookies[i].split('=');
+                            // 将解码后的键值对分别作为属性名称和属性值赋给对象
+                            result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+                        }
+                        return result;
+                    }
+                }
+                return null;
+            },
+            get (name, subName) {
+                // 获取所有子cookie
+                var subCookies = this.getAll(name);
+                if (subCookies) {
+                    //从属性中获取单个子cookie
+                    return subCookies[subName];
+                } else {
+                    return null;
+                }
+            },
+            setAll (name, subcookies, expires, path, domain, secure) {
+                var cookieText = encodeURIComponent(name) + "=",
+                    subcookieParts = [],
+                    subName;
+                // 遍历子cookie对象的属性
+                for (subName in subcookies) {
+                    //要先检测属性名
+                    if (subName.length > 0 && subcookies.hasOwnProperty(subName)) {
+                        // 属性名和属性值编码后=连接为字符串，并放到数组中
+                        subcookieParts.push(encodeURIComponent(subName) + "=" + encodeURIComponent(subcookies[subName]));
+                    }
+                }
+                if (subcookieParts.length > 0) {
+                    //用&连接子cookie串
+                    cookieText += subcookieParts.join("&");
+                    if (expires instanceof Date) {
+                        cookieText += "; expires=" + expires.toGMTString();
+                    }
+                    if (path) {
+                        cookieText += "; path=" + path;
+                    }
+                    if (domain) {
+                        cookieText += "; domain=" + domain;
+                    }
+                    if (secure) {
+                        cookieText += "; secure";
+                    }
+                } else {
+                    cookieText += "; expires=" + (new Date(0)).toGMTString();
+                }
+                //设置整个cookie
+                document.cookie = cookieText;
+            },
+            set (name, subName, value, expires, path, domain, secure) {
+                //获取当前cookie对象
+                var subcookies = this.getAll(name) || {};
+                //单个cookie对应的属性替换
+                subcookies[subName] = value;
+                //重新设置cookie
+                this.setAll(name, subcookies, expires, path, domain, secure);
+            },
+            unsetAll (name, path, domain, secure) {
+                this.setAll(name, null, new Date(0), path, domain, secure);
+            },
+            unset (name, subName, path, domain, secure) {
+                //获取当前cookie对象
+                var subcookies = this.getAll(name);
+                if (subcookies) {
+                    //删除子cookie对应的属性
+                    delete subcookies[subName];
+                    //重新设置cookie
+                    this.setAll(name, subcookies, null, path, domain, secure);
+                }
+            },
         }
     };
 
