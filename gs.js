@@ -620,6 +620,51 @@
             define: define
         };
     })();
+    // cookie方法
+    Gs.cookie = (function () {
+        // 获取cookie
+        var get = function (name) {
+            var cookieName = encodeURIComponent(name) + '=',
+                cookieStart = document.cookie.indexOf(cookieName),
+                cookieValue = null,
+                cookieEnd;
+            if (cookieStart > -1) {
+                cookieEnd = document.cookie.indexOf(';', cookieStart);
+                if (cookieEnd === -1) {
+                    cookieEnd = document.cookie.length;
+                }
+                cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+            }
+            return cookieValue;
+        };
+        // 设置cookie
+        var set = function (name, value, expires, path, domain, secure) {
+            var cookieInfo = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+            if (expires instanceof Date) {
+                cookieInfo += '; expires=' + expires.toGMTString;
+            }
+            if (path) {
+                cookieInfo += '; path=' + path;
+            }
+            if (domain) {
+                cookieInfo += '; domain=' + domain;
+            }
+            if (secure) {
+                cookieInfo += '; secure';
+            }
+            document.cookie = cookieInfo;
+        };
+        // 删除cookie
+        var unset = function (name, path, domain, secure) {
+            this.set(name, "", new Date(0), path, domain, secure);
+        };
+
+        return {
+            get: get,
+            set: set,
+            unset: unset
+        }
+    })();
     // 获取浏览器的信息
     Gs.browser = function () {
         var b = {},
