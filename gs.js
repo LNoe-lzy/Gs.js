@@ -385,6 +385,42 @@
             }
         }
     };
+    /*
+     ajax
+     data = {
+     type: GET / POST,
+     url: '',
+     data: {},
+     async: true / false
+     success: function () {},
+     error: function () {]
+     }
+     */
+    Gs.ajax = function (data) {
+        let xhr;
+        xhr = (window.XMLHttpRequest) ? (new XMLHttpRequest()) : (new ActiveXObject('Microsoft.XMLHTTP'));
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+
+                }
+            }
+        };
+        xhr.open(data.type, data.url, data.async);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send((data.type === 'POST') ? Gs.serialize(data.data) : null);
+    };
+    // 格式化ajax数据
+    Gs.serialize = function (obj) {
+        if (typeof obj === "object") {
+            let str = "";
+            for (let key of Object.keys(obj)) {
+                str += key + "=" + obj[key] + "&" ;
+            }
+            obj = str.substr(0, str.length-1);
+        }
+        return obj;
+    };
     // 回调函数列表对象
     Gs.callback = {
         callbacks: [],
@@ -488,7 +524,7 @@
             }
         },
         // 使用模块
-        use: function (name) {
+        use (name) {
             let moduleMap = this.moduleMap;
             let noop = this.noop();
             // 存储要使用的模块
@@ -508,6 +544,52 @@
             }
             return module.entity;
         }
+    };
+
+    Gs.cookie = {
+       get (name) {
+           let cookieName = encodeURIComponent(name) + '=',
+               cookieStart = document.cookie.indexOf(cookieName),
+               cookieValue = null,
+               cookieEnd;
+           if (cookieStart > -1) {
+               cookieEnd = document.cookie.indexOf(';', cookieStart);
+               if (cookieEnd === -1) {
+                   cookieEnd = document.cookie.length;
+               }
+               cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+           }
+           return cookieValue;
+       },
+        set (name, value, expires, path, domain, secure) {
+           let cookieInfo = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+            if (expires instanceof Date) {
+                cookieInfo += '; expires=' + expires.toGMTString;
+            }
+            if (path) {
+                cookieInfo += '; path=' + path;
+            }
+            if (domain) {
+                cookieInfo += '; domain=' + domain;
+            }
+            if (secure) {
+                cookieInfo += '; secure';
+            }
+            document.cookie = cookieInfo;
+        },
+        unset (name, path, domain, secure) {
+            this.set(name, "", new Date(0), path, domain, secure);
+        }
+    };
+
+    Gs.browser = () => {
+        let b = {},
+            u = navigator.userAgent.toLowerCase(),
+            e =/(msie|firefox|chrome|opera|version).*?([\d.]+)/,
+            m = u.match(e);
+        b.browser = m[1].replace(/version/, "'safari");
+        b.version = m[2];
+        return b;
     };
 
 }
